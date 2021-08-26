@@ -58,3 +58,5 @@ tools/aulast/aulast
 tools/aulastlog/aulastlog
 tools/ausyscall/ausyscall
 tools/auvirt/auvirt
+cmake-build-debug
+.idea
