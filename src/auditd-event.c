@@ -631,13 +631,13 @@ void syscall_parse(struct auditd_event *e){
         sys->alias = sys->id;
         if(sys->id == 57)
             sys->alias = 56;
-    } else if (!strncmp(type, "EXECVE", 6)) {//拼接full cmd到audit日志
+    } else if (AUDIT_EXECVE == e->reply.type) {//拼接full cmd到audit日志
         full_cmd(e->reply.message, sys->attr);
-    } else if (!strncmp(type, "SOCKADDR", 8)) {
+    } else if (AUDIT_SOCKADDR == e->reply.type) {
         sscanf(e->reply.message, "type=%*s msg=audit(%*s saddr=%255s", &(sys->attr));
-    } else if(!strncmp(type, "CWD", 3)){
+    } else if(AUDIT_CWD == e->reply.type){
         sscanf(e->reply.message, "type=%*s msg=%*s cwd=%255s", &(sys->cwd));
-    } else if(!strncmp(type, "PATH", 4)){
+    } else if(AUDIT_PATH == e->reply.type){
         sscanf(e->reply.message, "type=%*s msg=%*s item=%*d name=%255s", &(sys->path));
     }
 }
