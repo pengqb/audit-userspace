@@ -1178,6 +1178,7 @@ int main(int argc, char *argv[])
         LinkList *cur = get_node_ifnull_add(head, 0, sys->ses, RULE_NUM, rules);
         dump(sys, header,icache, cur);
     }
+
     free(sys);
 
     while(head->next != NULL){
