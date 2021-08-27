@@ -582,6 +582,12 @@ void syscall_parse(struct auditd_event *e){
         return;
     }
     z = p - id;
+    type = audit_msg_type_to_name(e->reply.type);
+    if (type == NULL) {
+        snprintf(unknown, sizeof(unknown),
+                 "UNKNOWN[%d]", e->reply.type);
+        type = unknown;
+    }
     if (strncmp(id, header, z)) {
         // Current message belongs to another event: send cached messages
         if (icache > 0) {
@@ -591,14 +597,6 @@ void syscall_parse(struct auditd_event *e){
             memset(cache, 0, sizeof(cache));
             memset(sys, 0, sizeof(Sysdump));
         }
-
-        type = audit_msg_type_to_name(e->reply.type);
-        if (type == NULL) {
-            snprintf(unknown, sizeof(unknown),
-                     "UNKNOWN[%d]", e->reply.type);
-            type = unknown;
-        }
-
         strncpy(cache, type, len);
         total_len = len;
         icache = 1;

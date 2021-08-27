@@ -206,8 +206,8 @@ static int is_sub_sequence(Sysdump *a, LinkList *node) {
 }
 
 void dump(Sysdump *sys, char*header, char *cache, int icache, LinkList *node) {
-//    if(-1 == sys->ses)
-//        return;
+    if(-1 == sys->ses)
+        return;
 //1.某些类型的日志不参与所有规则的匹配
     int syscall = sys->id;
     if(
