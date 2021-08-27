@@ -209,7 +209,7 @@ void dump(Sysdump *sys, char*header, int icache, LinkList *node) {
     if(-1 == sys->ses)
         return;
 //1.某些类型的日志不参与所有规则的匹配
-//    int syscall = sys->id;
+    int syscall = sys->id;
 //    if(
 //            syscall != 2 &&
 //            syscall != 4 &&
