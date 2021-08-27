@@ -205,7 +205,7 @@ static int is_sub_sequence(Sysdump *a, LinkList *node) {
     return 0;
 }
 
-void dump(Sysdump *sys, char*header, char *cache, int icache, LinkList *node) {
+void dump(Sysdump *sys, char*header, int icache, LinkList *node) {
     if(-1 == sys->ses)
         return;
 //1.某些类型的日志不参与所有规则的匹配
@@ -268,17 +268,17 @@ void dump(Sysdump *sys, char*header, char *cache, int icache, LinkList *node) {
 
     char snapshot[SIMPLE_MAXSTR];
     if (syscall == 59) {
-        snprintf(snapshot,sizeof(snapshot),"sc=%03d,%s %d,%d,%d,%d,%d,%s,%s %s, cwd=%s, %s,total %d line\n", syscall, header,
-                 sys->exit, sys->ppid, sys->pid, sys->user, sys->ses, sys->comm, sys->exe, sys->attr, sys->cwd, cache, icache);
+        snprintf(snapshot,sizeof(snapshot),"sc=%03d,%s %d,%d,%d,%d,%d,%s,%s %s, cwd=%s, total %d line\n", syscall, header,
+                 sys->exit, sys->ppid, sys->pid, sys->user, sys->ses, sys->comm, sys->exe, sys->attr, sys->cwd, icache);
     } else if (syscall == 42){
-        snprintf(snapshot,sizeof(snapshot),"sc=%03d,%s %d,%d,%d,%d,%d,%s,%s %s, %s,total %d line\n", syscall, header,
-                 sys->exit, sys->ppid, sys->pid, sys->user, sys->ses, sys->comm, sys->exe, sys->attr, cache, icache);
+        snprintf(snapshot,sizeof(snapshot),"sc=%03d,%s %d,%d,%d,%d,%d,%s,%s %s, total %d line\n", syscall, header,
+                 sys->exit, sys->ppid, sys->pid, sys->user, sys->ses, sys->comm, sys->exe, sys->attr, icache);
     } else if (syscall == 2 || syscall == 4){
-        snprintf(snapshot,sizeof(snapshot),"sc=%03d,%s %d,%d,%d,%d,%d,%s,%s,%s %s, %s,total %d line\n", syscall, header,
-                 sys->exit, sys->ppid, sys->pid, sys->user, sys->ses, sys->comm, sys->exe, sys->path, sys->attr, cache, icache);
+        snprintf(snapshot,sizeof(snapshot),"sc=%03d,%s %d,%d,%d,%d,%d,%s,%s,%s %s, total %d line\n", syscall, header,
+                 sys->exit, sys->ppid, sys->pid, sys->user, sys->ses, sys->comm, sys->exe, sys->path, sys->attr, icache);
     } else {
-        snprintf(snapshot,sizeof(snapshot),"sc=%03d,%s %d,%d,%d,%d,%d,%s,%s %s,total %d line\n", syscall, header,
-                 sys->exit, sys->ppid, sys->pid, sys->user, sys->ses, sys->comm, sys->exe, cache, icache);
+        snprintf(snapshot,sizeof(snapshot),"sc=%03d,%s %d,%d,%d,%d,%d,%s,%s total %d line\n", syscall, header,
+                 sys->exit, sys->ppid, sys->pid, sys->user, sys->ses, sys->comm, sys->exe, icache);
     }
 
 //    if (syscall == 59) {

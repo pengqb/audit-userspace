@@ -15,7 +15,7 @@
 
 
 void full_cmd(const char *buffer, char *fcmd);
-void dump(Sysdump *sys, char*header, char *cache, int icache, LinkList *node);
+void dump(Sysdump *sys, char*header, int icache, LinkList *node);
 
 int64_t w_ftell(FILE *x);
 FILE *file_open(int do_fseek, char *file);

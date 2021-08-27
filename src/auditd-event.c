@@ -556,21 +556,16 @@ struct auditd_event *create_event(char *msg, ack_func_type ack_func,
 #define MAX_HEADER 64
 #define OS_MAXSTR 65536
 extern char header[MAX_HEADER];
-extern char cache[OS_MAXSTR];
 extern int icache;
-extern size_t total_len;
 extern Sysdump *sys;
 extern LinkList * head;
 extern struct rule rules[];
 
 void syscall_parse(struct auditd_event *e){
-    size_t len = 0;
     char *id;
     char *p;
     size_t z;
-    //char type[MAX_TYPE] = {'\0'};
-    char * type;
-    char unknown[32];
+
     if(e->reply.len != strlen(e->reply.message)){
         printf("Line in '%s' contains some zero-bytes (valid=%ld / total=%ld). Dropping line.",
                e->reply.message, (int64_t) strlen(e->reply.message), (int64_t) e->reply.len);
@@ -583,26 +578,14 @@ void syscall_parse(struct auditd_event *e){
         return;
     }
     z = p - id;
-    sscanf(e->reply.message, "type=%s ", &type);
 
-    type = audit_msg_type_to_name(e->reply.type);
-    if (type == NULL) {
-        snprintf(unknown, sizeof(unknown),
-                 "UNKNOWN[%d]", e->reply.type);
-        type = unknown;
-    }
-    len = strlen(type);
     if (strncmp(id, header, z)) {
         // Current message belongs to another event: send cached messages
         if (icache > 0) {
-            cache[total_len] = '\0';
             LinkList *cur = get_node_ifnull_add(head, 0, sys->ses, RULE_NUM, rules);
-            dump(sys, header, cache, icache, cur);
-            memset(cache, 0, sizeof(cache));
+            dump(sys, header, icache, cur);
             memset(sys, 0, sizeof(Sysdump));
         }
-        strncpy(cache, type, len);
-        total_len = len;
         icache = 1;
         strncpy(header, id, z < MAX_HEADER ? z : MAX_HEADER - 1);
     } else {
@@ -610,12 +593,7 @@ void syscall_parse(struct auditd_event *e){
         if (icache == MAX_CACHE)
             printf("Discarding audit message because cache is full.");
         else {
-            if (total_len + len + 1 < OS_MAXSTR) {
-                cache[total_len++] = ' ';
-                strncpy(cache + total_len, type, len);
-                total_len += len;
-                icache++;
-            }
+            icache++;
         }
     }
     if (AUDIT_SYSCALL == e->reply.type) {

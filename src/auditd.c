@@ -81,9 +81,7 @@ static uint32_t session;
 Sysdump *sys = NULL;
 LinkList * head = NULL;
 char header[MAX_HEADER] = {'\0'};
-char cache[OS_MAXSTR] = {0};
 int icache = 0;
-size_t total_len = 0;
 struct rule rules[] =
         {
                 {
@@ -1176,9 +1174,8 @@ int main(int argc, char *argv[])
 	free(cur_event);
 
     if (icache > 0) {
-        cache[total_len] = '\0';
         LinkList *cur = get_node_ifnull_add(head, 0, sys->ses, RULE_NUM, rules);
-        dump(sys, header, cache, icache, cur);
+        dump(sys, header,icache, cur);
     }
     free(sys);
 
