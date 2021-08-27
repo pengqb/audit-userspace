@@ -47,7 +47,6 @@
 #include "libdisp.h"
 #include "private.h"
 #include "syscall.h"
-
 #include "ev.h"
 
 #if EV_CHILD_ENABLE

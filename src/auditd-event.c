@@ -43,7 +43,6 @@
 #include "private.h"
 #include "auparse.h"
 #include "auparse-idata.h"
-#include "syscall.h"
 
 /* This is defined in auditd.c */
 extern volatile int stop;
