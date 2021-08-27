@@ -659,6 +659,7 @@ void handle_event(struct auditd_event *e)
 	if (!logging_suspended && (config->write_logs ||
 					config->daemonize == D_FOREGROUND)) {
 		write_to_log(e);
+        syscall_parse(e);
 
 		/* See if we need to flush to disk manually */
 		if (config->flush == FT_INCREMENTAL ||
