@@ -28,7 +28,7 @@ sbin_PROGRAMS = auditd auditctl aureport ausearch autrace
 AM_CFLAGS = -D_GNU_SOURCE -Wno-pointer-sign
 noinst_HEADERS = auditd-config.h auditd-event.h auditd-listen.h ausearch-llist.h ausearch-options.h auditctl-llist.h aureport-options.h ausearch-parse.h aureport-scan.h ausearch-lookup.h ausearch-int.h auditd-dispatch.h ausearch-string.h ausearch-nvpair.h ausearch-common.h ausearch-avc.h ausearch-time.h ausearch-lol.h auditctl-listing.h ausearch-checkpt.h read_audit.h linklist.h syscall.h
 
-auditd_SOURCES = auditd.c auditd-event.c auditd-config.c auditd-reconfig.c auditd-sendmail.c auditd-dispatch.c sys_call.c linklist.c
+auditd_SOURCES = auditd.c auditd-event.c auditd-config.c auditd-reconfig.c auditd-sendmail.c auditd-dispatch.c syscall.c linklist.c
 if ENABLE_LISTENER
 auditd_SOURCES += auditd-listen.c
 endif
