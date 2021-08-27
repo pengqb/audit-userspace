@@ -557,8 +557,8 @@ struct auditd_event *create_event(char *msg, ack_func_type ack_func,
 #define OS_MAXSTR 65536
 extern char header[MAX_HEADER];
 extern char cache[OS_MAXSTR];
-extern int icache = 0;
-extern size_t total_len = 0;
+extern int icache;
+extern size_t total_len;
 extern Sysdump *sys;
 extern LinkList * head;
 
