@@ -588,6 +588,7 @@ void syscall_parse(struct auditd_event *e){
                  "UNKNOWN[%d]", e->reply.type);
         type = unknown;
     }
+    len = strlen(type);
     if (strncmp(id, header, z)) {
         // Current message belongs to another event: send cached messages
         if (icache > 0) {
