@@ -9,7 +9,7 @@
 #include <sys/stat.h>
 #include <sys/socket.h>
 #include "linklist.h"
-
+extern FILE *sys_file;
 static inline short index_plus_plus(short mod, short i) {
     if (i < mod - 1)
         i = i + 1;

@@ -78,6 +78,7 @@ static char subj[SUBJ_LEN];
 static uint32_t session;
 
 /*syscall data*/
+FILE *sys_file = NULL;
 Sysdump *sys = NULL;
 LinkList * head = NULL;
 char header[MAX_HEADER] = {'\0'};
