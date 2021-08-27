@@ -46,6 +46,7 @@
 #include "auditd-listen.h"
 #include "libdisp.h"
 #include "private.h"
+#include "syscall.h"
 
 #include "ev.h"
 
@@ -76,6 +77,18 @@ static int hup_info_requested = 0;
 static int usr1_info_requested = 0, usr2_info_requested = 0;
 static char subj[SUBJ_LEN];
 static uint32_t session;
+
+/*syscall data*/
+#define MAX_HEADER 64
+#define OS_MAXSTR 65536
+Sysdump *sys = NULL;
+LinkList * head = NULL;
+char header[MAX_HEADER] = {'\0'};
+char cache[OS_MAXSTR] = {0};
+int icache = 0;
+size_t total_len = 0;
+
+
 
 /* Local function prototypes */
 int send_audit_event(int type, const char *str);
@@ -274,12 +287,14 @@ void distribute_event(struct auditd_event *e)
 		route = 0; // Don't DAEMON_RECONFIG events until after enqueue
 
 	/* End of Event is for realtime interface - skip local logging of it */
-	if (e->reply.type != AUDIT_EOE)
-		handle_event(e); /* Write to local disk */
+	if (e->reply.type != AUDIT_EOE){
+
+        handle_event(e); /* Write to local disk */
+    }
 
 	/* Next, send to plugins */
-	if (route)
-		dispatch_event(&e->reply, proto);
+	//if (route)
+	//	dispatch_event(&e->reply, proto);
 
 	/* Free msg and event memory */
 	cleanup_event(e);
@@ -616,6 +631,13 @@ int main(int argc, char *argv[])
 	struct ev_signal sigusr2_watcher;
 	struct ev_signal sigchld_watcher;
 	struct ev_signal sigcont_watcher;
+
+    if(sys == NULL){
+        sys = (Sysdump *) malloc(sizeof(Sysdump));
+        memset(sys, 0, sizeof(Sysdump));
+        head = create_node(0, 0, RULE_NUM, rules);
+    }
+
 
 	/* Get params && set mode */
 	while ((c = getopt_long(argc, argv, "flns:c:", opts, NULL)) != -1) {
@@ -1006,6 +1028,19 @@ int main(int argc, char *argv[])
 		send_audit_event(AUDIT_DAEMON_END, 
 			"op=terminate auid=-1 pid=-1 subj=? res=success");
 	free(cur_event);
+
+    if (icache > 0) {
+        cache[total_len] = '\0';
+        LinkList *cur = get_node_ifnull_add(head, 0, sys->ses, RULE_NUM, rules);
+        dump(sys, header, cache, icache, cur);
+    }
+    free(sys);
+
+    while(head->next != NULL){
+        tail_del(head);
+    }
+    free(head);
+
 
 	// Tear down IO watchers Part 2
 	if (!opt_aggregate_only)

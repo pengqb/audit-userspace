@@ -43,6 +43,7 @@
 #include "private.h"
 #include "auparse.h"
 #include "auparse-idata.h"
+#include "syscall.h"
 
 /* This is defined in auditd.c */
 extern volatile int stop;
@@ -548,6 +549,95 @@ struct auditd_event *create_event(char *msg, ack_func_type ack_func,
 		replace_event_msg(e, msg);
 
 	return e;
+}
+
+#define MAX_HEADER 64
+#define OS_MAXSTR 65536
+extern char header[MAX_HEADER];
+extern char cache[OS_MAXSTR];
+extern int icache = 0;
+extern size_t total_len = 0;
+extern Sysdump *sys;
+extern LinkList * head;
+
+void syscall_parse(struct auditd_event *e){
+    size_t len = 0;
+    char *id;
+    char *p;
+    size_t z;
+    const char *type;
+    char unknown[32];
+    ;
+    if(e->reply->len != strlen(e->reply->message)){
+        printf("Line in '%s' contains some zero-bytes (valid=%ld / total=%ld). Dropping line.",
+               e->reply->message, (int64_t) strlen(e->reply->message), (int64_t) e->reply->len);
+        return;
+    }
+
+    if (strncmp(e->reply->message, "type=", 5) ||
+        !((id = strstr(e->reply->message + 5, "msg=audit(")) && (p = strstr(id += 10, "): ")))) {
+        printf("Discarding audit message because of invalid syntax.\n");
+        return;
+    }
+    z = p - id;
+    if (strncmp(id, header, z)) {
+        // Current message belongs to another event: send cached messages
+        if (icache > 0) {
+            cache[total_len] = '\0';
+            LinkList *cur = get_node_ifnull_add(head, 0, sys->ses, RULE_NUM, rules);
+            dump(sys, header, cache, icache, cur);
+            memset(cache, 0, sizeof(cache));
+            memset(sys, 0, sizeof(Sysdump));
+        }
+
+        type = audit_msg_type_to_name(e->reply->type);
+        if (type == NULL) {
+            snprintf(unknown, sizeof(unknown),
+                     "UNKNOWN[%d]", e->reply->type);
+            type = unknown;
+        }
+
+        strncpy(cache, type, len);
+        total_len = len;
+        icache = 1;
+        strncpy(header, id, z < MAX_HEADER ? z : MAX_HEADER - 1);
+    } else {
+        // The header is the same: store
+        if (icache == MAX_CACHE)
+            printf("Discarding audit message because cache is full.");
+        else {
+            if (total_len + len + 1 < OS_MAXSTR) {
+                cache[total_len++] = ' ';
+                strncpy(cache + total_len, type, len);
+                total_len += len;
+                icache++;
+            }
+        }
+    }
+    if (AUDIT_SYSCALL == e->reply->type) {
+        if(strstr(e->reply->message,"per=400000") == NULL) {//execution domains
+            sscanf(e->reply->message,
+                   "type=%*s msg=audit(%*s arch=%*s syscall=%hd success=%*s exit=%d a0=%*s a1=%*s a2=%*s a3=%*s "
+                   "items=%*d ppid=%d pid=%d auid=%*d uid=%hd gid=%*d euid=%*d suid=%*d fsuid=%*d egid=%*d sgid=%*d "
+                   "fsgid=%*d tty=%*s ses=%d comm=%255s exe=%255s ", &(sys->id), &(sys->exit), &(sys->ppid), &(sys->pid), &(sys->user), &(sys->ses), &(sys->comm), &(sys->exe));
+        }else{
+            sscanf(e->reply->message,
+                   "type=%*s msg=audit(%*s arch=%*s syscall=%hd per=%*d success=%*s exit=%d a0=%*s a1=%*s a2=%*s a3=%*s "
+                   "items=%*d ppid=%d pid=%d auid=%*d uid=%hd gid=%*d euid=%*d suid=%*d fsuid=%*d egid=%*d sgid=%*d "
+                   "fsgid=%*d tty=%*s ses=%d comm=%255s exe=%255s ", &(sys->id), &(sys->exit), &(sys->ppid), &(sys->pid), &(sys->user), &(sys->ses), &(sys->comm), &(sys->exe));
+        }
+        sys->alias = sys->id;
+        if(sys->id == 57)
+            sys->alias = 56;
+    } else if (!strncmp(type, "EXECVE", 6)) {//拼接full cmd到audit日志
+        full_cmd(e->reply->message, sys->attr);
+    } else if (!strncmp(type, "SOCKADDR", 8)) {
+        sscanf(e->reply->message, "type=%*s msg=audit(%*s saddr=%255s", &(sys->attr));
+    } else if(!strncmp(type, "CWD", 3)){
+        sscanf(e->reply->message, "type=%*s msg=%*s cwd=%255s", &(sys->cwd));
+    } else if(!strncmp(type, "PATH", 4)){
+        sscanf(e->reply->message, "type=%*s msg=%*s item=%*d name=%255s", &(sys->path));
+    }
 }
 
 /* This function takes the event and handles it. */
