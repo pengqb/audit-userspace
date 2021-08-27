@@ -300,6 +300,6 @@ void dump(Sysdump *sys, char*header, char *cache, int icache, LinkList *node) {
     pprintf("%s",snapshot);
     is_sub_sequence(sys, node);//rules 数组的名字就是数组的地址, &rules ,&rules[0]都可以？
 
-    fflush(out);
+    fflush(sys_file);
 }
 
