@@ -50,7 +50,8 @@ LinkList *create_node(int user, int ses, int rule_num, Rule *rules) {
     cur->ses = ses;
     cur->s_index = 0;
     cur->snapshots =(char **)malloc(sizeof(char*) * SNAPSHOT_LEN);
-    for(int i = 0; i < SNAPSHOT_LEN; i++){
+    int i;
+    for(i = 0; i < SNAPSHOT_LEN; i++){
         cur->snapshots[i] = (char *)malloc(sizeof(char) * SIMPLE_MAXSTR);
     }
     cur->rules_num = rule_num;
