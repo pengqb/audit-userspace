@@ -79,16 +79,12 @@ static char subj[SUBJ_LEN];
 static uint32_t session;
 
 /*syscall data*/
-#define MAX_HEADER 64
-#define OS_MAXSTR 65536
 Sysdump *sys = NULL;
 LinkList * head = NULL;
 char header[MAX_HEADER] = {'\0'};
 char cache[OS_MAXSTR] = {0};
 int icache = 0;
 size_t total_len = 0;
-
-
 
 /* Local function prototypes */
 int send_audit_event(int type, const char *str);

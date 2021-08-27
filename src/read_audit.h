@@ -6,12 +6,13 @@
 
 #ifndef HELLO_READ_AUDIT_H
 #define HELLO_READ_AUDIT_H
-
+#define OS_MAXSTR 65536
 #define SIMPLE_MAXSTR 1024
 #define STR_LEN 256
 #define SNAPSHOT_LEN 28
 #define MAX_RULE_LEN 16
 #define RULE_NUM 15
+#define MAX_HEADER 64
 
 #define FOPEN_ERROR   "(1103): Could not open file '%s' due to [(%d)-(%s)]."
 #define FSTAT_ERROR   "(1117): Could not retrieve information of file '%s' due to [(%d)-(%s)]."

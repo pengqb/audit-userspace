@@ -569,15 +569,14 @@ void syscall_parse(struct auditd_event *e){
     size_t z;
     const char *type;
     char unknown[32];
-    ;
-    if(e->reply->len != strlen(e->reply->message)){
+    if(e->reply.len != strlen(e->reply.message)){
         printf("Line in '%s' contains some zero-bytes (valid=%ld / total=%ld). Dropping line.",
-               e->reply->message, (int64_t) strlen(e->reply->message), (int64_t) e->reply->len);
+               e->reply.message, (int64_t) strlen(e->reply.message), (int64_t) e->reply.len);
         return;
     }
 
-    if (strncmp(e->reply->message, "type=", 5) ||
-        !((id = strstr(e->reply->message + 5, "msg=audit(")) && (p = strstr(id += 10, "): ")))) {
+    if (strncmp(e->reply.message, "type=", 5) ||
+        !((id = strstr(e->reply.message + 5, "msg=audit(")) && (p = strstr(id += 10, "): ")))) {
         printf("Discarding audit message because of invalid syntax.\n");
         return;
     }
@@ -592,10 +591,10 @@ void syscall_parse(struct auditd_event *e){
             memset(sys, 0, sizeof(Sysdump));
         }
 
-        type = audit_msg_type_to_name(e->reply->type);
+        type = audit_msg_type_to_name(e->reply.type);
         if (type == NULL) {
             snprintf(unknown, sizeof(unknown),
-                     "UNKNOWN[%d]", e->reply->type);
+                     "UNKNOWN[%d]", e->reply.type);
             type = unknown;
         }
 
@@ -616,14 +615,14 @@ void syscall_parse(struct auditd_event *e){
             }
         }
     }
-    if (AUDIT_SYSCALL == e->reply->type) {
-        if(strstr(e->reply->message,"per=400000") == NULL) {//execution domains
-            sscanf(e->reply->message,
+    if (AUDIT_SYSCALL == e->reply.type) {
+        if(strstr(e->reply.message,"per=400000") == NULL) {//execution domains
+            sscanf(e->reply.message,
                    "type=%*s msg=audit(%*s arch=%*s syscall=%hd success=%*s exit=%d a0=%*s a1=%*s a2=%*s a3=%*s "
                    "items=%*d ppid=%d pid=%d auid=%*d uid=%hd gid=%*d euid=%*d suid=%*d fsuid=%*d egid=%*d sgid=%*d "
                    "fsgid=%*d tty=%*s ses=%d comm=%255s exe=%255s ", &(sys->id), &(sys->exit), &(sys->ppid), &(sys->pid), &(sys->user), &(sys->ses), &(sys->comm), &(sys->exe));
         }else{
-            sscanf(e->reply->message,
+            sscanf(e->reply.message,
                    "type=%*s msg=audit(%*s arch=%*s syscall=%hd per=%*d success=%*s exit=%d a0=%*s a1=%*s a2=%*s a3=%*s "
                    "items=%*d ppid=%d pid=%d auid=%*d uid=%hd gid=%*d euid=%*d suid=%*d fsuid=%*d egid=%*d sgid=%*d "
                    "fsgid=%*d tty=%*s ses=%d comm=%255s exe=%255s ", &(sys->id), &(sys->exit), &(sys->ppid), &(sys->pid), &(sys->user), &(sys->ses), &(sys->comm), &(sys->exe));
@@ -632,13 +631,13 @@ void syscall_parse(struct auditd_event *e){
         if(sys->id == 57)
             sys->alias = 56;
     } else if (!strncmp(type, "EXECVE", 6)) {//拼接full cmd到audit日志
-        full_cmd(e->reply->message, sys->attr);
+        full_cmd(e->reply.message, sys->attr);
     } else if (!strncmp(type, "SOCKADDR", 8)) {
-        sscanf(e->reply->message, "type=%*s msg=audit(%*s saddr=%255s", &(sys->attr));
+        sscanf(e->reply.message, "type=%*s msg=audit(%*s saddr=%255s", &(sys->attr));
     } else if(!strncmp(type, "CWD", 3)){
-        sscanf(e->reply->message, "type=%*s msg=%*s cwd=%255s", &(sys->cwd));
+        sscanf(e->reply.message, "type=%*s msg=%*s cwd=%255s", &(sys->cwd));
     } else if(!strncmp(type, "PATH", 4)){
-        sscanf(e->reply->message, "type=%*s msg=%*s item=%*d name=%255s", &(sys->path));
+        sscanf(e->reply.message, "type=%*s msg=%*s item=%*d name=%255s", &(sys->path));
     }
 }
 
