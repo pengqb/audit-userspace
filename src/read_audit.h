@@ -62,8 +62,5 @@ typedef struct rule {
     short i;//窗口的当前索引，0---ring.mod-1
     short *array;//记录每个位置已经匹配的系统调用数
 } Rule;
-#ifndef FILE_OUTPUT
-#else
-FILE *out;
-#endif
+static FILE *sys_file = NULL;
 #endif //HELLO_READ_AUDIT_H

@@ -141,6 +141,8 @@ void shutdown_events(void)
 		fsync(log_fd);
 	if (log_file)
 		fclose(log_file);
+	if (sys_file)
+	    fclose(sys_file);
 }
 
 int init_event(struct daemon_conf *conf)

@@ -42,11 +42,7 @@ static inline int hex2str(const char *hex, char *lpstr) {
 static void pprintf(const char *format, ...) {
     va_list args;
     va_start(args, format);
-#ifndef FILE_OUTPUT
-    vprintf(format, args);
-#else
-    vfprintf(out,format,args);
-#endif
+    vfprintf(sys_file,format,args);
     va_end(args);
 }
 /*匹配是否成功及匹配成功后的清理现场，return 0 不匹配；return 1 匹配成功
@@ -304,8 +300,6 @@ void dump(Sysdump *sys, char*header, char *cache, int icache, LinkList *node) {
     pprintf("%s",snapshot);
     is_sub_sequence(sys, node);//rules 数组的名字就是数组的地址, &rules ,&rules[0]都可以？
 
-#ifdef FILE_OUTPUT
     fflush(out);
-#endif
 }
 

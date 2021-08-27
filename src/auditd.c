@@ -764,6 +764,12 @@ int main(int argc, char *argv[])
 		openlog("auditd", LOG_PID, LOG_DAEMON);
 	}
 
+    sys_file = fopen("/var/log/audit/sys.log", "w");
+    if (!sys_file) {
+        printf(FOPEN_ERROR, "sys.log", errno, strerror(errno));
+        return 1;
+    }
+
 	/* Init netlink */
 	if ((fd = audit_open()) < 0) {
         	audit_msg(LOG_ERR, "Cannot open netlink audit socket");
@@ -1040,7 +1046,8 @@ int main(int argc, char *argv[])
         tail_del(head);
     }
     free(head);
-
+    if(sys_file)
+        fclose(sys_file);
 
 	// Tear down IO watchers Part 2
 	if (!opt_aggregate_only)
