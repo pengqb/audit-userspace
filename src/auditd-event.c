@@ -43,6 +43,7 @@
 #include "private.h"
 #include "auparse.h"
 #include "auparse-idata.h"
+#include "syscall.h"
 
 /* This is defined in auditd.c */
 extern volatile int stop;
@@ -560,6 +561,7 @@ extern int icache;
 extern size_t total_len;
 extern Sysdump *sys;
 extern LinkList * head;
+extern struct rule rules[];
 
 void syscall_parse(struct auditd_event *e){
     size_t len = 0;
