@@ -568,7 +568,7 @@ void syscall_parse(struct auditd_event *e){
     char *id;
     char *p;
     size_t z;
-    const char *type;
+    char type[MAX_TYPE] = {'\0'};
     char unknown[32];
     if(e->reply.len != strlen(e->reply.message)){
         printf("Line in '%s' contains some zero-bytes (valid=%ld / total=%ld). Dropping line.",
@@ -582,12 +582,7 @@ void syscall_parse(struct auditd_event *e){
         return;
     }
     z = p - id;
-    type = audit_msg_type_to_name(e->reply.type);
-    if (type == NULL) {
-        snprintf(unknown, sizeof(unknown),
-                 "UNKNOWN[%d]", e->reply.type);
-        type = unknown;
-    }
+    sscanf(e->reply.message, "type=%s ", &type);
     len = strlen(type);
     if (strncmp(id, header, z)) {
         // Current message belongs to another event: send cached messages
