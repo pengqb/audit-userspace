@@ -599,12 +599,12 @@ void syscall_parse(struct auditd_event *e){
     if (AUDIT_SYSCALL == e->reply.type) {
         if(strstr(e->reply.message,"per=400000") == NULL) {//execution domains
             sscanf(e->reply.message,
-                   "\"type=%*s msg=audit(%*s arch=%*s syscall=%hd success=%*s exit=%d a0=%*s a1=%*s a2=%*s a3=%*s "
+                   "type=%*s msg=audit(%*s arch=%*s syscall=%hd success=%*s exit=%d a0=%*s a1=%*s a2=%*s a3=%*s "
                    "items=%*d ppid=%d pid=%d auid=%*d uid=%hd gid=%*d euid=%*d suid=%*d fsuid=%*d egid=%*d sgid=%*d "
                    "fsgid=%*d tty=%*s ses=%d comm=%255s exe=%255s ", &(sys->id), &(sys->exit), &(sys->ppid), &(sys->pid), &(sys->user), &(sys->ses), &(sys->comm), &(sys->exe));
         }else{
             sscanf(e->reply.message,
-                   "\"type=%*s msg=audit(%*s arch=%*s syscall=%hd per=%*d success=%*s exit=%d a0=%*s a1=%*s a2=%*s a3=%*s "
+                   "type=%*s msg=audit(%*s arch=%*s syscall=%hd per=%*d success=%*s exit=%d a0=%*s a1=%*s a2=%*s a3=%*s "
                    "items=%*d ppid=%d pid=%d auid=%*d uid=%hd gid=%*d euid=%*d suid=%*d fsuid=%*d egid=%*d sgid=%*d "
                    "fsgid=%*d tty=%*s ses=%d comm=%255s exe=%255s ", &(sys->id), &(sys->exit), &(sys->ppid), &(sys->pid), &(sys->user), &(sys->ses), &(sys->comm), &(sys->exe));
         }
@@ -614,11 +614,11 @@ void syscall_parse(struct auditd_event *e){
     } else if (AUDIT_EXECVE == e->reply.type) {//拼接full cmd到audit日志
         full_cmd(e->reply.message, sys->attr);
     } else if (AUDIT_SOCKADDR == e->reply.type) {
-        sscanf(e->reply.message, "\"type=%*s msg=audit(%*s saddr=%255s", &(sys->attr));
+        sscanf(e->reply.message, "type=%*s msg=audit(%*s saddr=%255s", &(sys->attr));
     } else if(AUDIT_CWD == e->reply.type){
-        sscanf(e->reply.message, "\"type=%*s msg=%*s cwd=%255s", &(sys->cwd));
+        sscanf(e->reply.message, "type=%*s msg=%*s cwd=%255s", &(sys->cwd));
     } else if(AUDIT_PATH == e->reply.type){
-        sscanf(e->reply.message, "\"type=%*s msg=%*s item=%*d name=%255s", &(sys->path));
+        sscanf(e->reply.message, "type=%*s msg=%*s item=%*d name=%255s", &(sys->path));
     }
 }
 
