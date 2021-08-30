@@ -86,7 +86,7 @@ int icache = 0;
 struct rule rules[] =
         {
                 {
-                        .title = "反弹shell0", .len = 8, .mod = 15, .type = 1,
+                        .title = "反弹shell0", .len = 8, .mod = 13, .type = 1,
                         .syscalls = {{22, 0, ""},
                                      {56, 0, ""},
                                      {59, 0, ""},
@@ -152,7 +152,7 @@ struct rule rules[] =
                                      {59, 0, ""}}
                 },
                 {
-                        .title = "反弹shell6", .len = 5, .mod = 8, .type = 1,
+                        .title = "反弹shell6", .len = 5, .mod = 6, .type = 1,
                         .syscalls = {{22, 0, ""},
                                      {56, 0, ""},
                                      {59, 0, "awk"},
