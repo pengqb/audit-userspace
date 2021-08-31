@@ -210,17 +210,17 @@ void dump(Sysdump *sys, char*header, int icache, LinkList *node) {
         return;
 //1.某些类型的日志不参与所有规则的匹配
     int syscall = sys->id;
-//    if(
-//            syscall != 2 &&
-//            syscall != 4 &&
-//            syscall != 22 &&
-//            syscall != 32 &&
-//            syscall != 33 &&
-//    syscall != 42 && syscall != 56 && syscall != 57 && syscall != 58 && syscall != 59 &&
-//    syscall != 102 &&
-//    syscall != 132 && syscall != 235 &&
-//    syscall != 280 && syscall != 292 && syscall != 293){
-//        return;
+    if(
+            syscall != 2 &&
+            syscall != 4 &&
+            syscall != 22 &&
+            syscall != 32 &&
+            syscall != 33 &&
+    syscall != 42 && syscall != 56 && syscall != 57 && syscall != 58 && syscall != 59 &&
+    syscall != 102 &&
+    syscall != 132 && syscall != 235 &&
+    syscall != 280 && syscall != 292 && syscall != 293){
+        return;
 //    } else if (syscall == 42) {
 //    if (syscall == 0 || syscall == 1
 //    || syscall == 2 || syscall == 3
@@ -236,35 +236,35 @@ void dump(Sysdump *sys, char*header, int icache, LinkList *node) {
 //    || syscall == 97 || syscall == 104 || syscall == 107 || syscall == 108 || syscall == 110 || syscall == 111
 //    || syscall == 158 || syscall == 273) {//
 //        return;//可能去掉
-//    } else if(syscall == 59){
-//        if (sys->exit == -ENOENT)
-//            return;
-//    }else if (syscall == 42) {
-//        if (sys->exit == -ENOENT)
-//            return;
-//        int fam = sys->attr[1] - 48;//字符串转整数
-//        if (fam != AF_INET)
-//            return;
-//        if (!strncmp(IPV4_LOCAL, sys->attr, 32) || !strncmp(IPV6_LOCAL, sys->attr, 56)
-//            || !strncmp(INET_53, sys->attr, 8))
-//            return;
-//    }else if(syscall == 4){
-//        int len = 0;
-//        if(sys->path[0] == '"'){
-//            len = strlen(sys->path) -6;//如果有单引号，需要删除单引号。
-//            char *cur =&(sys->path[(len > 0) ? len : 0]);
-//            if (strncmp(cur, "class", 5))
-//                return;
-//        }else{
-//            len = strlen(sys->path) -10;
-//            char *cur =&(sys->path[(len > 0) ? len : 0]);
-//            if (strncmp(cur, "636C617373", 10))//class的16进制表示
-//                return;
-//        }
-//    }else if (syscall == 2){
-//        if (strncmp(sys->comm, "\"php\"", 5) && strncmp(sys->comm, "\"httpd\"", 7))
-//            return;
-//    }
+    } else if(syscall == 59){
+        if (sys->exit == -ENOENT)
+            return;
+    }else if (syscall == 42) {
+        if (sys->exit == -ENOENT)
+            return;
+        int fam = sys->attr[1] - 48;//字符串转整数
+        if (fam != AF_INET)
+            return;
+        if (!strncmp(IPV4_LOCAL, sys->attr, 32) || !strncmp(IPV6_LOCAL, sys->attr, 56)
+            || !strncmp(INET_53, sys->attr, 8))
+            return;
+    }else if(syscall == 4){
+        int len = 0;
+        if(sys->path[0] == '"'){
+            len = strlen(sys->path) -6;//如果有单引号，需要删除单引号。
+            char *cur =&(sys->path[(len > 0) ? len : 0]);
+            if (strncmp(cur, "class", 5))
+                return;
+        }else{
+            len = strlen(sys->path) -10;
+            char *cur =&(sys->path[(len > 0) ? len : 0]);
+            if (strncmp(cur, "636C617373", 10))//class的16进制表示
+                return;
+        }
+    }else if (syscall == 2){
+        if (strncmp(sys->comm, "\"php\"", 5) && strncmp(sys->comm, "\"httpd\"", 7))
+            return;
+    }
 
     char snapshot[SIMPLE_MAXSTR];
     if (syscall == 59) {
