@@ -11,7 +11,7 @@
 #define STR_LEN 256
 #define SNAPSHOT_LEN 28
 #define MAX_RULE_LEN 16
-#define RULE_NUM 15
+#define RULE_NUM 12
 #define MAX_HEADER 64
 
 #define FOPEN_ERROR   "(1103): Could not open file '%s' due to [(%d)-(%s)]."

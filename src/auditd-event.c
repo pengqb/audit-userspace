@@ -595,6 +595,7 @@ void syscall_parse(struct auditd_event *e){
             icache++;
         }
     }
+    int result = 0;
     if (AUDIT_SYSCALL == e->reply.type) {
         if(strstr(e->reply.message,"per=400000") == NULL) {//execution domains
             sscanf(e->reply.message,
