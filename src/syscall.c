@@ -217,7 +217,7 @@ void dump(Sysdump *sys, char*header, int icache, LinkList *node) {
             syscall != 32 &&
             syscall != 33 &&
     syscall != 42 && syscall != 56 && syscall != 57 && syscall != 58 && syscall != 59 &&
-    syscall != 102 &&
+//    syscall != 102 &&
     syscall != 132 && syscall != 235 &&
     syscall != 280 && syscall != 292 && syscall != 293){
         return;
